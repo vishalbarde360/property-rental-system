@@ -72,7 +72,7 @@ export default function Register({ onLogin }) {
               onChange={(e) => setF({ ...f, role: e.target.value })}
             >
               <option value="tenant">Tenant — looking for a home</option>
-              <option value="owner">Owner — listing a property</option>
+            
             </select>
           </label>
           <button className="primary span2">Create account</button>

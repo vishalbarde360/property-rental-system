@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   Routes,
   Route,
@@ -6,8 +7,9 @@ import {
   useNavigate,
   Navigate,
 } from "react-router-dom";
-
+import GoogleSuccess from "./pages/GoogleSuccess";
 import api from "./services/api";
+import ProfileDropdown from "./components/ ProfileDropdown.jsx";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -65,19 +67,17 @@ function Nav({ user, onLogout }) {
         )}
 
         {user ? (
-          <button
-            className="linkbtn"
-            onClick={() => {
-              localStorage.removeItem("rentnest_token");
-              localStorage.removeItem("rentnest_user");
+         <ProfileDropdown
+    user={user}
+    onLogout={() => {
+      localStorage.removeItem("rentnest_token");
+      localStorage.removeItem("rentnest_user");
 
-              onLogout();
+      onLogout();
 
-              nav("/login");
-            }}
-          >
-            Logout
-          </button>
+      nav("/login");
+    }}
+  />
         ) : (
           <>
             <Link to="/login">
@@ -159,6 +159,12 @@ export default function App() {
               <Login onLogin={setUser} />
             }
           />
+          <Route
+  path="/google-success"
+  element={
+    <GoogleSuccess onLogin={setUser} />
+  }
+/>
 
           {/* Register */}
           <Route

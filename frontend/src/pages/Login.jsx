@@ -44,6 +44,20 @@ export default function Login({ onLogin }) {
           />
         </label>
         <button className="primary full">Sign in</button>
+        <div className="google-divider">
+  <span>OR</span>
+</div>
+
+<button
+  type="button"
+  className="google-btn"
+  onClick={() => {
+    window.location.href =
+      import.meta.env.VITE_GOOGLE_AUTH_URL;
+  }}
+>
+  Continue with Google
+</button>
         <p className="switch">
           <Link to="/forgot-password">Forgot password?</Link>
         </p>

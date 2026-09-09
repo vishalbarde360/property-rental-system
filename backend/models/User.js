@@ -11,7 +11,18 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     phone: { type: String, trim: true },
-    passwordHash: { type: String, required: true },
+   passwordHash: { type: String, required: false },
+   googleId: {
+  type: String,
+  unique: true,
+  sparse: true,
+},
+
+authProvider: {
+  type: String,
+  enum: ["local", "google"],
+  default: "local",
+},
     role: {
       type: String,
       enum: ["tenant", "owner", "admin"],

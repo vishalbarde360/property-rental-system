@@ -694,3 +694,230 @@ footer {
 .row div:first-child span:last-child {
   color: #9a9488;
 }
+.profile-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 6px 10px;
+}
+
+.profile-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #111827;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.profile-avatar.large {
+  width: 45px;
+  height: 45px;
+  font-size: 18px;
+}
+
+.profile-arrow {
+  font-size: 10px;
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-header strong {
+  display: block;
+  font-size: 16px;
+}
+
+.profile-header span {
+  display: block;
+  margin-top: 3px;
+  color: #777;
+  font-size: 13px;
+}
+
+.profile-info {
+  padding: 10px 0;
+}
+
+.profile-item {
+  display: flex;
+  gap: 10px;
+  padding: 9px 0;
+}
+
+.profile-item > span {
+  font-size: 17px;
+}
+
+.profile-item small {
+  display: block;
+  color: #888;
+  font-size: 11px;
+}
+
+.profile-item p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.profile-logout {
+  width: 100%;
+  border: none;
+  background: #f3f4f6;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.profile-logout:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+/* ================= USER VIEW BUTTON ================= */
+
+.view-btn {
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.view-btn:hover {
+  opacity: 0.85;
+}
+
+/* ================= USER MODAL ================= */
+
+.user-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.user-modal {
+  position: relative;
+
+  width: 420px;
+  max-width: calc(100% - 40px);
+
+  background: white;
+  border-radius: 16px;
+
+  padding: 28px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.user-modal h2 {
+  margin: 0 0 20px;
+  font-size: 28px;
+}
+
+.user-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.user-detail strong {
+  color: #555;
+  font-size: 14px;
+}
+
+.user-detail span {
+  text-align: right;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* Close X */
+
+.modal-close {
+  position: absolute;
+
+  top: 10px;
+  right: 14px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 28px;
+  cursor: pointer;
+
+  color: #555;
+}
+
+.modal-close:hover {
+  color: #111;
+}
+
+/* Close Button */
+
+.modal-close-btn {
+  width: 100%;
+
+  margin-top: 22px;
+
+  padding: 11px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #111827;
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+.modal-close-btn:hover {
+  opacity: 0.9;
+}

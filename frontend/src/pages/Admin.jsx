@@ -8,6 +8,9 @@ export default function Admin() {
   const [props, setProps] = useState([]);
   const [reports, setReports] = useState([]);
 
+  // Selected user for View modal
+  const [selectedUser, setSelectedUser] = useState(null);
+
   const load = () =>
     Promise.all([
       api.get("/admin/analytics"),
@@ -25,30 +28,42 @@ export default function Admin() {
     load();
   }, []);
 
+  // User Enable / Disable
   const userStatus = async (id, status) => {
     try {
       await api.patch("/admin/users/" + id, { status });
       load();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update user");
+      alert(
+        err.response?.data?.message ||
+          "Failed to update user"
+      );
     }
   };
 
+  // Property Publish / Pause
   const propStatus = async (id, status) => {
     try {
       await api.patch("/admin/properties/" + id, { status });
       load();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update property");
+      alert(
+        err.response?.data?.message ||
+          "Failed to update property"
+      );
     }
   };
 
+  // Report Resolve / Reject
   const reportStatus = async (id, status) => {
     try {
       await api.patch("/reports/" + id, { status });
       load();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update report");
+      alert(
+        err.response?.data?.message ||
+          "Failed to update report"
+      );
     }
   };
 
@@ -65,7 +80,7 @@ export default function Admin() {
 
       <h1>Admin dashboard</h1>
 
-      {/* Stats */}
+      {/* ================= STATS ================= */}
       <div className="stats">
         {a &&
           Object.entries(a).map(([k, v]) => (
@@ -76,13 +91,14 @@ export default function Admin() {
           ))}
       </div>
 
-      {/* Users */}
+      {/* ================= USERS ================= */}
       <section>
         <h2>Users</h2>
 
         <div className="table">
           {users.slice(0, 8).map((u) => (
             <div className="row" key={u._id}>
+
               <div>
                 <b>{u.name}</b>
 
@@ -92,27 +108,45 @@ export default function Admin() {
               </div>
 
               <div className="actions">
-                <span className={`status ${u.status}`}>
+
+                {/* Status */}
+                <span
+                  className={`status ${u.status}`}
+                >
                   {u.status}
                 </span>
 
+                {/* View User */}
+                <button
+                  className="view-btn"
+                  onClick={() => setSelectedUser(u)}
+                >
+                  View
+                </button>
+
+                {/* Enable / Disable */}
                 <button
                   onClick={() =>
                     userStatus(
                       u._id,
-                      u.status === "disabled" ? "active" : "disabled",
+                      u.status === "disabled"
+                        ? "active"
+                        : "disabled"
                     )
                   }
                 >
-                  {u.status === "disabled" ? "Enable" : "Disable"}
+                  {u.status === "disabled"
+                    ? "Enable"
+                    : "Disable"}
                 </button>
+
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Properties */}
+      {/* ================= PROPERTIES ================= */}
       <section>
         <h2>Properties</h2>
 
@@ -131,7 +165,9 @@ export default function Admin() {
               <div className="actions">
 
                 {/* Property Status */}
-                <span className={`status ${p.status}`}>
+                <span
+                  className={`status ${p.status}`}
+                >
                   {p.status}
                 </span>
 
@@ -165,7 +201,7 @@ export default function Admin() {
         </div>
       </section>
 
-      {/* Reports */}
+      {/* ================= REPORTS ================= */}
       <section>
         <h2>Reports</h2>
 
@@ -182,26 +218,127 @@ export default function Admin() {
               </div>
 
               <div className="actions">
-                <span className={`status ${r.status}`}>
+
+                <span
+                  className={`status ${r.status}`}
+                >
                   {r.status}
                 </span>
 
                 {r.status === "open" && (
                   <>
-                    <button onClick={() => reportStatus(r._id, "resolved")}>
+                    <button
+                      onClick={() =>
+                        reportStatus(
+                          r._id,
+                          "resolved"
+                        )
+                      }
+                    >
                       Resolve
                     </button>
-                    <button onClick={() => reportStatus(r._id, "rejected")}>
+
+                    <button
+                      onClick={() =>
+                        reportStatus(
+                          r._id,
+                          "rejected"
+                        )
+                      }
+                    >
                       Reject
                     </button>
                   </>
                 )}
-              </div>
 
+              </div>
             </div>
           ))}
         </div>
       </section>
+
+      {/* ================= USER VIEW MODAL ================= */}
+      {selectedUser && (
+        <div
+          className="user-modal-overlay"
+          onClick={() => setSelectedUser(null)}
+        >
+          <div
+            className="user-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            {/* Close */}
+            <button
+              className="modal-close"
+              onClick={() => setSelectedUser(null)}
+            >
+              ×
+            </button>
+
+            <h2>User Details</h2>
+
+            {/* Name */}
+            <div className="user-detail">
+              <strong>Name</strong>
+              <span>
+                {selectedUser.name || "Not provided"}
+              </span>
+            </div>
+
+            {/* Email */}
+            <div className="user-detail">
+              <strong>Email</strong>
+              <span>
+                {selectedUser.email || "Not provided"}
+              </span>
+            </div>
+
+            {/* Phone */}
+            <div className="user-detail">
+              <strong>Phone</strong>
+              <span>
+                {selectedUser.phone || "Not provided"}
+              </span>
+            </div>
+
+            {/* Role */}
+            <div className="user-detail">
+              <strong>Role</strong>
+              <span>
+                {selectedUser.role
+                  ? selectedUser.role
+                      .charAt(0)
+                      .toUpperCase() +
+                    selectedUser.role.slice(1)
+                  : "Not provided"}
+              </span>
+            </div>
+
+            {/* Status */}
+            <div className="user-detail">
+              <strong>Status</strong>
+              <span>
+                {selectedUser.status
+                  ? selectedUser.status
+                      .charAt(0)
+                      .toUpperCase() +
+                    selectedUser.status.slice(1)
+                  : "Not provided"}
+              </span>
+            </div>
+
+            {/* Close Button */}
+            <button
+              className="modal-close-btn"
+              onClick={() => setSelectedUser(null)}
+            >
+              Close
+            </button>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

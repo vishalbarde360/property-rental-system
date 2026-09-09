@@ -2,12 +2,37 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
+exports.googleCallback = async (req, res) => {
+  try {
+    const token = makeToken(req.user._id);
+
+    const user = {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+    };
+
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+
+    res.redirect(
+      `${frontendUrl}/google-success?token=${encodeURIComponent(
+        token
+      )}&user=${encodeURIComponent(JSON.stringify(user))}`
+    );
+  } catch (e) {
+    res.status(500).json({
+      message: "Google authentication failed",
+      error: e.message,
+    });
+  }
+};
 const makeToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 exports.register = async (req, res) => {
   try {
     const { name, email, password, phone, role } = req.body;
-    if (!name || !email || !password)
+    if (!name || !email || !password || !phone || !role)
       return res
         .status(400)
         .json({ message: "Name, email and password are required" });
@@ -20,7 +45,7 @@ exports.register = async (req, res) => {
       email,
       phone,
       role: safeRole,
-      passwordHash,
+      password:passwordHash,
     });
     res
       .status(201)
