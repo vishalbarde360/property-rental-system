@@ -1,0 +1,13 @@
+const router = require("express").Router();
+const c = require("../controllers/propertyController");
+const { protect, authorize } = require("../middleware/auth");
+router.get("/", c.list);
+router.get("/owner/my", protect, authorize("owner"), c.myProperties);
+router.get("/saved/my", protect, authorize("tenant"), c.mySavedProperties);
+router.post("/:id/save", protect, authorize("tenant"), c.saveProperty);
+router.delete("/:id/save", protect, authorize("tenant"), c.unsaveProperty);
+router.get("/:id", c.getOne);
+router.post("/", protect, authorize("owner"), c.create);
+router.patch("/:id", protect, authorize("owner"), c.update);
+router.delete("/:id", protect, authorize("owner"), c.remove);
+module.exports = router;
