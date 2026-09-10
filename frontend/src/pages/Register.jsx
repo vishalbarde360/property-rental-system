@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import AuthShell from "../components/AuthShell";
+
 export default function Register({ onLogin }) {
   const [f, setF] = useState({
       name: "",
@@ -24,63 +26,36 @@ export default function Register({ onLogin }) {
     }
   };
   return (
-    <div className="auth-wrap">
-      <div className="auth-panel wide">
-        <p className="eyebrow">JOIN RENTNEST</p>
-        <h1>Create your account</h1>
-        <p>Choose your role and start renting or listing.</p>
-        {err && <div className="error">{err}</div>}
-        <form onSubmit={submit} className="form-grid">
-          <label>
-            Name
-            <input
-              required
-              value={f.name}
-              onChange={(e) => setF({ ...f, name: e.target.value })}
-            />
-          </label>
-          <label>
-            Phone
-            <input
-              value={f.phone}
-              onChange={(e) => setF({ ...f, phone: e.target.value })}
-            />
-          </label>
-          <label>
-            Email
-            <input
-              required
-              type="email"
-              value={f.email}
-              onChange={(e) => setF({ ...f, email: e.target.value })}
-            />
-          </label>
-          <label>
-            Password
-            <input
-              required
-              type="password"
-              minLength="6"
-              value={f.password}
-              onChange={(e) => setF({ ...f, password: e.target.value })}
-            />
-          </label>
-          <label className="span2">
-            I am a
-            <select
-              value={f.role}
-              onChange={(e) => setF({ ...f, role: e.target.value })}
-            >
-              <option value="tenant">Tenant — looking for a home</option>
-            
-            </select>
-          </label>
-          <button className="primary span2">Create account</button>
-        </form>
-        <p className="switch">
-          Already registered? <Link to="/login">Sign in</Link>
-        </p>
-      </div>
-    </div>
+    <AuthShell wide title="Create your account" subtitle="Choose your role and start renting or listing.">
+      {err && <div className="mb-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{err}</div>}
+      <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+        <label className="label">
+          Name
+          <input className="input mt-1" required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+        </label>
+        <label className="label">
+          Phone
+          <input className="input mt-1" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
+        </label>
+        <label className="label">
+          Email
+          <input className="input mt-1" required type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
+        </label>
+        <label className="label">
+          Password
+          <input className="input mt-1" required type="password" minLength="6" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} />
+        </label>
+        <label className="label sm:col-span-2">
+          I am a
+          <select className="input mt-1" value={f.role} onChange={(e) => setF({ ...f, role: e.target.value })}>
+            <option value="tenant">Tenant — looking for a home</option>
+          </select>
+        </label>
+        <button className="btn-primary sm:col-span-2" type="submit">Create account</button>
+      </form>
+      <p className="mt-4 text-sm text-slate-500">
+        Already registered? <Link className="font-semibold text-navy-700" to="/login">Sign in</Link>
+      </p>
+    </AuthShell>
   );
 }

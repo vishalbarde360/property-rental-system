@@ -1,7 +1,8 @@
-import "./Home.css"
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import api from "../services/api";
+import PropertyCard from "../components/PropertyCard";
+
 export default function Home() {
   const [params, setParams] = useSearchParams();
   const [data, setData] = useState({ properties: [], total: 0 });
@@ -13,6 +14,7 @@ export default function Home() {
     maxRent: params.get("maxRent") || "",
     bedrooms: params.get("bedrooms") || "",
   });
+  const [tab, setTab] = useState("rent");
   const load = async () => {
     setLoading(true);
     try {
@@ -27,119 +29,190 @@ export default function Home() {
   useEffect(() => {
     load();
   }, []);
+
   return (
-    <div className="page">
-      <section className="hero">
-        <div>
-          <p className="eyebrow">FIND A PLACE TO CALL HOME</p>
-          <h1>
-            Better homes.
-            <br />
-            <em>Less hassle.</em>
-          </h1>
-          <p className="hero-copy">
-            Discover verified-style rental listings, apply online, track
-            approvals and keep payment records in one simple place.
-          </p>
+    <div>
+      <section className="relative overflow-hidden bg-slate-50">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-16">
+          <div>
+            <h1 className="text-4xl font-extrabold leading-[1.1] text-navy-900 sm:text-5xl lg:text-6xl">
+              Find Your
+              <br /> Perfect Home
+            </h1>
+            <p className="mt-4 max-w-md text-slate-500">
+              Discover exceptional properties and unlock the door to your dream home.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a className="btn-primary" href="#listings">
+                Explore Properties →
+              </a>
+              <a className="btn-secondary" href="#search">
+                How It Works ▸
+              </a>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-3xl shadow-search">
+            <img src="/images/hero.jpg" alt="Luxury home" className="h-[340px] w-full object-cover sm:h-[420px]" />
+          </div>
         </div>
-        <div className="hero-card">
-          <div className="hero-stat">
-            <strong>01</strong>
-            <span>Search by city, rent & type</span>
-          </div>
-          <div className="hero-stat">
-            <strong>02</strong>
-            <span>Apply with a few clicks</span>
-          </div>
-          <div className="hero-stat">
-            <strong>03</strong>
-            <span>Track your rental journey</span>
+
+        <div id="search" className="relative z-10 mx-auto -mb-10 max-w-6xl px-4 sm:px-6">
+          <div className="rounded-2xl bg-white p-4 shadow-search">
+            <div className="mb-4 flex gap-2">
+              {["buy", "rent", "sell"].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTab(t)}
+                  className={`rounded-full px-4 py-1.5 text-sm font-semibold capitalize ${
+                    tab === t ? "bg-navy-700 text-white" : "bg-slate-100 text-slate-600"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            <div className="grid gap-3 md:grid-cols-6">
+              <label className="md:col-span-2">
+                <span className="mb-1 block text-xs font-semibold text-slate-500">Location</span>
+                <input
+                  className="input"
+                  placeholder="City, Neighborhood, or ZIP"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                />
+              </label>
+              <label>
+                <span className="mb-1 block text-xs font-semibold text-slate-500">Property Type</span>
+                <select
+                  className="input"
+                  value={form.type}
+                  onChange={(e) => setForm({ ...form, type: e.target.value })}
+                >
+                  <option value="">Any Type</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="house">House</option>
+                  <option value="room">Room</option>
+                  <option value="studio">Studio</option>
+                  <option value="villa">Villa</option>
+                </select>
+              </label>
+              <label>
+                <span className="mb-1 block text-xs font-semibold text-slate-500">Min rent</span>
+                <input
+                  className="input"
+                  type="number"
+                  placeholder="₹Min"
+                  value={form.minRent}
+                  onChange={(e) => setForm({ ...form, minRent: e.target.value })}
+                />
+              </label>
+              <label>
+                <span className="mb-1 block text-xs font-semibold text-slate-500">Max rent</span>
+                <input
+                  className="input"
+                  type="number"
+                  placeholder="₹Max"
+                  value={form.maxRent}
+                  onChange={(e) => setForm({ ...form, maxRent: e.target.value })}
+                />
+              </label>
+              <div className="flex items-end">
+                <button className="btn-primary w-full" onClick={load} type="button">
+                  Search Properties
+                </button>
+              </div>
+            </div>
+            <div className="mt-3 max-w-xs">
+              <label>
+                <span className="mb-1 block text-xs font-semibold text-slate-500">Beds</span>
+                <input
+                  className="input"
+                  placeholder="Any"
+                  value={form.bedrooms}
+                  onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
+                />
+              </label>
+            </div>
           </div>
         </div>
       </section>
-      <section className="searchbox">
-        <input
-          placeholder="City e.g. Pune"
-          value={form.city}
-          onChange={(e) => setForm({ ...form, city: e.target.value })}
-        />
-        <select
-          value={form.type}
-          onChange={(e) => setForm({ ...form, type: e.target.value })}
-        >
-          <option value="">Any type</option>
-          <option value="apartment">Apartment</option>
-          <option value="house">House</option>
-          <option value="room">Room</option>
-          <option value="studio">Studio</option>
-          <option value="villa">Villa</option>
-        </select>
-        <input
-          type="number"
-          placeholder="Min rent"
-          value={form.minRent}
-          onChange={(e) => setForm({ ...form, minRent: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Max rent"
-          value={form.maxRent}
-          onChange={(e) => setForm({ ...form, maxRent: e.target.value })}
-        />
-        <button onClick={load}>Search homes</button>
+
+      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-6 pt-20 sm:px-6 md:grid-cols-4">
+        {[
+          ["Find The Perfect Home", "Browse thousands of verified listings that match your needs."],
+          ["Expert Agents", "Work with experienced agents who guide you at every step."],
+          ["Trusted & Secure", "Transparent process and secure property transactions."],
+          ["Best Deals", "Get the best value with exclusive property deals."],
+        ].map(([t, d]) => (
+          <div key={t} className="text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy-700 text-white">⌂</div>
+            <h3 className="text-sm font-bold text-navy-900">{t}</h3>
+            <p className="mt-1 text-sm text-slate-500">{d}</p>
+          </div>
+        ))}
       </section>
-      <section className="section-head">
-        <div>
-          <p className="eyebrow">EXPLORE LISTINGS</p>
-          <h2>Homes worth viewing</h2>
+
+      <section id="listings" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="eyebrow">Featured Properties</p>
+            <h2 className="mt-1 text-3xl font-extrabold text-navy-900">Homes You'll Love</h2>
+          </div>
+          <span className="text-sm text-slate-500">{data.total} results</span>
         </div>
-        <span>{data.total} results</span>
+        {loading ? (
+          <div className="rounded-xl border border-slate-100 bg-slate-50 p-10 text-center text-slate-500">
+            Loading properties…
+          </div>
+        ) : data.properties.length ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {data.properties.map((p, i) => (
+              <PropertyCard key={p._id} p={p} index={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-slate-100 bg-slate-50 p-10 text-center text-slate-500">
+            No published properties found. Try another filter.
+          </div>
+        )}
       </section>
-      {loading ? (
-        <div className="empty">Loading properties…</div>
-      ) : data.properties.length ? (
-        <div className="grid">
-          {data.properties.map((p) => (
-            <PropertyCard key={p._id} p={p} />
+
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+        <div className="overflow-hidden rounded-2xl bg-navy-900 text-white md:grid md:grid-cols-2">
+          <div className="p-8 sm:p-10">
+            <h2 className="text-3xl font-extrabold">Thinking of Selling?</h2>
+            <p className="mt-2 max-w-sm text-white/70">Get Maximum Value for Your Property</p>
+            <p className="mt-3 max-w-md text-sm text-white/60">
+              Our expert agents help you sell faster and for the best possible price.
+            </p>
+            <Link className="mt-6 inline-flex rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-navy-800" to="/properties/new">
+              Get Free Home Valuation →
+            </Link>
+          </div>
+          <div className="relative min-h-[240px]">
+            <img src="/images/interior.jpg" alt="" className="h-full w-full object-cover" />
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <p className="eyebrow">Why Choose Us</p>
+        <h2 className="mt-1 text-3xl font-extrabold text-navy-900">We Make Real Estate Simple</h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-4">
+          {[
+            ["Local Expertise", "In-depth knowledge of local markets and neighborhoods."],
+            ["Personalized Service", "Tailored solutions that fit your unique needs."],
+            ["Proven Results", "A track record of successful sales and happy clients."],
+            ["Full Support", "From search to closing, we're with you all the way."],
+          ].map(([t, d]) => (
+            <div key={t}>
+              <h3 className="font-bold text-navy-900">{t}</h3>
+              <p className="mt-1 text-sm text-slate-500">{d}</p>
+            </div>
           ))}
         </div>
-      ) : (
-        <div className="empty">
-          No published properties found. Try another filter.
-        </div>
-      )}
+      </section>
     </div>
-  );
-}
-function PropertyCard({ p }) {
-  return (
-    <Link className="property-card" to={`/properties/${p._id}`}>
-      <div className="property-img">
-        {p.images?.[0] ? (
-          <img src={p.images[0]} alt="" />
-        ) : (
-          <div className="img-placeholder">⌂</div>
-        )}
-        <span className="pill">{p.type}</span>
-      </div>
-      <div className="property-body">
-        <div>
-          <h3>{p.title}</h3>
-          <p>
-            {p.city}
-            {p.address ? ` · ${p.address}` : ""}
-          </p>
-        </div>
-        <strong>
-          ₹{Number(p.rent).toLocaleString("en-IN")}
-          <small>/month</small>
-        </strong>
-        <div className="meta">
-          <span>{p.bedrooms} beds</span>
-          <span>{p.bathrooms} baths</span>
-          <span>{p.availability ? "Available" : "Unavailable"}</span>
-        </div>
-      </div>
-    </Link>
   );
 }

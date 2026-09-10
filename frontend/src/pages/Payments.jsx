@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  useSearchParams,
-  useNavigate,
-} from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { inr, statusClass } from "../ui";
 
 export default function Payments({ user }) {
   const [searchParams] = useSearchParams();
   const nav = useNavigate();
-
   const applicationId = searchParams.get("applicationId");
-
   const [payments, setPayments] = useState([]);
   const [application, setApplication] = useState(null);
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
   const [form, setForm] = useState({
     amount: "",
     type: "rent",
@@ -25,51 +19,28 @@ export default function Payments({ user }) {
     transactionReference: "",
   });
 
-  // =========================
-  // LOAD PAYMENTS
-  // =========================
   const load = async () => {
     try {
       setLoading(true);
       setError("");
-
       const paymentResponse = await api.get("/payments");
-
-      setPayments(
-        Array.isArray(paymentResponse.data)
-          ? paymentResponse.data
-          : []
-      );
-
-      // If tenant came from Pay Rent button
+      setPayments(Array.isArray(paymentResponse.data) ? paymentResponse.data : []);
       if (applicationId) {
-        const applicationResponse =
-          await api.get("/applications");
-
+        const applicationResponse = await api.get("/applications");
         const found = applicationResponse.data.find(
-          (a) =>
-            String(a._id) === String(applicationId)
+          (a) => String(a._id) === String(applicationId),
         );
-
         if (!found) {
           setError("Application not found.");
           return;
         }
-
         setApplication(found);
-
-        setForm((prev) => ({
-          ...prev,
-          amount: found.propertyId?.rent || "",
-        }));
+        setForm((prev) => ({ ...prev, amount: found.propertyId?.rent || "" }));
       } else {
         setApplication(null);
       }
     } catch (e) {
-      setError(
-        e.response?.data?.message ||
-          "Could not load payment information"
-      );
+      setError(e.response?.data?.message || "Could not load payment information");
     } finally {
       setLoading(false);
     }
@@ -79,487 +50,211 @@ export default function Payments({ user }) {
     load();
   }, [applicationId]);
 
-  // =========================
-  // TENANT - CREATE PAYMENT
-  // =========================
   const submitPayment = async (e) => {
     e.preventDefault();
-
     if (!application) {
-      setError(
-        "Please select an approved application."
-      );
+      setError("Please select an approved application.");
       return;
     }
-
-    // Get owner ID automatically
     const receiverId =
       application.ownerId?._id ||
       application.ownerId ||
       application.propertyId?.ownerId?._id ||
       application.propertyId?.ownerId;
-
     if (!receiverId) {
-      setError(
-        "Owner information is not available."
-      );
+      setError("Owner information is not available.");
       return;
     }
-
-    if (
-      !form.amount ||
-      Number(form.amount) <= 0
-    ) {
+    if (!form.amount || Number(form.amount) <= 0) {
       setError("Please enter a valid amount.");
       return;
     }
-
     try {
       setSaving(true);
       setError("");
-
       await api.post("/payments", {
         applicationId: application._id,
         amount: Number(form.amount),
         type: form.type,
         method: form.method,
-        receiverId: receiverId,
-        transactionReference:
-          form.transactionReference.trim(),
+        receiverId,
+        transactionReference: form.transactionReference.trim(),
         status: "pending",
       });
-
-      alert(
-        "Payment created successfully!"
-      );
-
+      alert("Payment created successfully!");
       nav("/payments");
     } catch (e) {
       setError(
         e.response?.data?.message ||
           e.response?.data?.error ||
-          "Could not create payment"
+          "Could not create payment",
       );
     } finally {
       setSaving(false);
     }
   };
 
-  // =========================
-  // OWNER - CONFIRM PAYMENT
-  // =========================
   const confirmPayment = async (paymentId) => {
     try {
       setError("");
-
-      await api.patch(
-        `/payments/${paymentId}`,
-        {
-          status: "success",
-        }
-      );
-
-      alert(
-        "Payment confirmed successfully!"
-      );
-
+      await api.patch(`/payments/${paymentId}`, { status: "success" });
+      alert("Payment confirmed successfully!");
       await load();
     } catch (e) {
-      setError(
-        e.response?.data?.message ||
-          "Could not confirm payment"
-      );
+      setError(e.response?.data?.message || "Could not confirm payment");
     }
   };
-
-  // =========================
-  // HELPERS
-  // =========================
-  const formatAmount = (amount) =>
-    Number(amount || 0).toLocaleString("en-IN");
 
   const formatDate = (date) => {
     if (!date) return "—";
-
-    return new Date(date).toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }
-    );
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const statusText = (status) => {
-    if (status === "success") {
-      return "Success";
-    }
-
-    if (status === "failed") {
-      return "Failed";
-    }
-
+    if (status === "success") return "Success";
+    if (status === "failed") return "Failed";
     return "Pending";
   };
 
-  const typeText = (type) => {
-    return type === "deposit"
-      ? "Deposit"
-      : "Rent";
-  };
+  const typeText = (type) => (type === "deposit" ? "Deposit" : "Rent");
 
   const methodText = (method) => {
-    if (method === "bank_transfer") {
-      return "Bank Transfer";
-    }
-
-    if (method === "upi") {
-      return "UPI";
-    }
-
-    if (method === "card") {
-      return "Card";
-    }
-
-    if (method === "cash") {
-      return "Cash";
-    }
-
+    if (method === "bank_transfer") return "Bank Transfer";
+    if (method === "upi") return "UPI";
+    if (method === "card") return "Card";
+    if (method === "cash") return "Cash";
     return method || "—";
   };
 
-  // =========================
-  // UI
-  // =========================
   return (
     <div className="page">
-
-      {/* =========================
-          PAGE HEADER
-      ========================= */}
-      <div className="section-head">
-        <div>
-          <p className="eyebrow">
-            PAYMENTS
-          </p>
-
-          <h1>
-            {user?.role === "owner"
-              ? "Received Payments"
-              : "My Payments"}
-          </h1>
-
-          <p className="muted">
-            {user?.role === "owner"
-              ? "View and confirm payments received from tenants."
-              : "Manage your rent and deposit payments."}
-          </p>
-        </div>
+      <div>
+        <p className="eyebrow">PAYMENTS</p>
+        <h1 className="mt-1 text-3xl font-extrabold text-navy-900">
+          {user?.role === "owner" ? "Received Payments" : "My Payments"}
+        </h1>
+        <p className="mt-2 text-slate-500">
+          {user?.role === "owner"
+            ? "View and confirm payments received from tenants."
+            : "Manage your rent and deposit payments."}
+        </p>
       </div>
-
-      {/* =========================
-          ERROR
-      ========================= */}
-      {error && (
-        <div className="error">
-          {error}
-        </div>
+      {error && <div className="mt-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>}
+      {user?.role === "tenant" && applicationId && application && (
+        <section className="card mt-6 p-5">
+          <h2 className="text-xl font-bold text-navy-900">Make a Payment</h2>
+          <p className="mt-1 text-slate-500">{application.propertyId?.title || "Property"}</p>
+          <p className="text-sm text-slate-500">Rent: {inr(application.propertyId?.rent)}</p>
+          <form className="mt-4 grid gap-4 sm:grid-cols-2" onSubmit={submitPayment}>
+            <label className="label">
+              Amount
+              <input
+                className="input mt-1"
+                required
+                type="number"
+                min="1"
+                value={form.amount}
+                onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
+              />
+            </label>
+            <label className="label">
+              Payment Type
+              <select
+                className="input mt-1"
+                value={form.type}
+                onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
+              >
+                <option value="rent">Rent</option>
+                <option value="deposit">Deposit</option>
+              </select>
+            </label>
+            <label className="label">
+              Payment Method
+              <select
+                className="input mt-1"
+                value={form.method}
+                onChange={(e) => setForm((prev) => ({ ...prev, method: e.target.value }))}
+              >
+                <option value="upi">UPI</option>
+                <option value="card">Card</option>
+                <option value="cash">Cash</option>
+                <option value="bank_transfer">Bank Transfer</option>
+              </select>
+            </label>
+            <label className="label">
+              Transaction Reference <span className="font-normal text-slate-400">optional</span>
+              <input
+                className="input mt-1"
+                value={form.transactionReference}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, transactionReference: e.target.value }))
+                }
+                placeholder="UPI123456"
+              />
+            </label>
+            <div className="flex gap-2 sm:col-span-2">
+              <button className="btn-primary" type="submit" disabled={saving}>
+                {saving ? "Processing..." : "Pay Now"}
+              </button>
+              <button className="btn-secondary" type="button" onClick={() => nav("/payments")}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </section>
       )}
-
-      {/* ==================================================
-          TENANT PAYMENT FORM
-          ONLY TENANT CAN SEE THIS
-      ================================================== */}
-      {user?.role === "tenant" &&
-        applicationId &&
-        application && (
-          <section className="card form-card">
-
-            <h2>Make a Payment</h2>
-
-            <p className="muted">
-              {application.propertyId?.title ||
-                "Property"}
-            </p>
-
-            <p className="muted">
-              Rent: ₹
-              {formatAmount(
-                application.propertyId?.rent
-              )}
-            </p>
-
-            <form
-              className="form-grid"
-              onSubmit={submitPayment}
-            >
-
-              {/* AMOUNT */}
-              <label>
-                Amount
-
-                <input
-                  required
-                  type="number"
-                  min="1"
-                  value={form.amount}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      amount:
-                        e.target.value,
-                    }))
-                  }
-                />
-              </label>
-
-              {/* PAYMENT TYPE */}
-              <label>
-                Payment Type
-
-                <select
-                  value={form.type}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      type:
-                        e.target.value,
-                    }))
-                  }
-                >
-                  <option value="rent">
-                    Rent
-                  </option>
-
-                  <option value="deposit">
-                    Deposit
-                  </option>
-                </select>
-              </label>
-
-              {/* PAYMENT METHOD */}
-              <label>
-                Payment Method
-
-                <select
-                  value={form.method}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      method:
-                        e.target.value,
-                    }))
-                  }
-                >
-                  <option value="upi">
-                    UPI
-                  </option>
-
-                  <option value="card">
-                    Card
-                  </option>
-
-                  <option value="cash">
-                    Cash
-                  </option>
-
-                  <option value="bank_transfer">
-                    Bank Transfer
-                  </option>
-                </select>
-              </label>
-
-              {/* TRANSACTION REFERENCE */}
-              <label>
-                Transaction Reference
-
-                <span className="hint">
-                  optional
-                </span>
-
-                <input
-                  value={
-                    form.transactionReference
-                  }
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      transactionReference:
-                        e.target.value,
-                    }))
-                  }
-                  placeholder="UPI123456"
-                />
-              </label>
-
-              {/* BUTTONS */}
-              <div className="actions span2">
-
-                <button
-                  type="submit"
-                  className="primary"
-                  disabled={saving}
-                >
-                  {saving
-                    ? "Processing..."
-                    : "Pay Now"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    nav("/payments")
-                  }
-                >
-                  Cancel
-                </button>
-
-              </div>
-            </form>
-          </section>
-        )}
-
-      {/* =========================
-          PAYMENT HISTORY
-      ========================= */}
       {loading ? (
-        <div className="empty">
-          Loading payments...
-        </div>
+        <div className="mt-8 rounded-xl bg-slate-50 p-10 text-center text-slate-500">Loading payments...</div>
       ) : payments.length === 0 ? (
-        <div className="empty">
-
-          <h3>
-            No payments yet
-          </h3>
-
-          <p>
-            Your rent and deposit payments
-            will appear here.
-          </p>
-
+        <div className="mt-8 rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+          <h3 className="text-lg font-bold text-navy-900">No payments yet</h3>
+          <p className="mt-1">Your rent and deposit payments will appear here.</p>
         </div>
       ) : (
-        <section>
-
-          <h2>
-            Payment History
-          </h2>
-
-          <div className="table">
-
+        <section className="mt-8">
+          <h2 className="text-xl font-bold text-navy-900">Payment History</h2>
+          <div className="mt-4 space-y-3">
             {payments.map((p) => {
-
-              // Current logged-in user is payment receiver
-              // (user.id comes from login/register, user._id from /auth/me)
               const currentUserId = user?._id || user?.id;
               const isReceiver =
-                String(
-                  p.receiverId?._id ||
-                    p.receiverId
-                ) ===
-                String(currentUserId);
-
+                String(p.receiverId?._id || p.receiverId) === String(currentUserId);
               return (
-                <div
-                  className="row"
-                  key={p._id}
-                >
-
-                  {/* =========================
-                      PAYMENT DETAILS
-                  ========================= */}
+                <div className="card flex flex-wrap items-start justify-between gap-4 p-4" key={p._id}>
                   <div>
-
-                    <b>
-                      ₹
-                      {formatAmount(
-                        p.amount
-                      )}
-                    </b>
-
-                    <span>
-                      {typeText(p.type)}
-                      {" · "}
-                      {methodText(
-                        p.method
-                      )}
-                    </span>
-
-                    {/* OWNER VIEW */}
+                    <b className="text-navy-900">{inr(p.amount)}</b>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {typeText(p.type)} · {methodText(p.method)}
+                    </p>
                     {isReceiver ? (
-                      <span>
-                        From:{" "}
-                        {p.payerId?.name ||
-                          "Tenant"}
-                      </span>
+                      <p className="text-sm text-slate-500">From: {p.payerId?.name || "Tenant"}</p>
                     ) : (
-                      /* TENANT VIEW */
-                      <span>
-                        To:{" "}
-                        {p.receiverId?.name ||
-                          "Owner"}
-                      </span>
+                      <p className="text-sm text-slate-500">To: {p.receiverId?.name || "Owner"}</p>
                     )}
-
-                    {/* TRANSACTION REFERENCE */}
                     {p.transactionReference && (
-                      <span>
-                        Ref:{" "}
-                        {
-                          p.transactionReference
-                        }
-                      </span>
+                      <p className="text-sm text-slate-500">Ref: {p.transactionReference}</p>
                     )}
-
-                    {/* DATE */}
-                    <span>
-                      {formatDate(
-                        p.paidAt ||
-                          p.createdAt
-                      )}
-                    </span>
-
+                    <p className="text-sm text-slate-400">{formatDate(p.paidAt || p.createdAt)}</p>
                   </div>
-
-                  {/* =========================
-                      STATUS + OWNER BUTTON
-                  ========================= */}
-                  <div className="actions">
-
-                    <span
-                      className={`status ${p.status}`}
-                    >
-                      {statusText(
-                        p.status
-                      )}
+                  <div className="flex items-center gap-2">
+                    <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(p.status)}`}>
+                      {statusText(p.status)}
                     </span>
-
-                    {/* 
-                      ONLY OWNER / RECEIVER
-                      CAN SEE THIS BUTTON
-                    */}
-                    {user?.role === "owner" &&
-  p.status === "pending" && (
-    <button
-      className="primary"
-      onClick={() => confirmPayment(p._id)}
-    >
-      Confirm Payment
-    </button>
-)}
-
+                    {user?.role === "owner" && p.status === "pending" && (
+                      <button className="btn-primary" onClick={() => confirmPayment(p._id)} type="button">
+                        Confirm Payment
+                      </button>
+                    )}
                   </div>
-
                 </div>
               );
             })}
-
           </div>
         </section>
       )}
-
     </div>
   );
 }

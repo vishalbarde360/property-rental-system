@@ -16,12 +16,9 @@ export default function GoogleSuccess({ onLogin }) {
 
     try {
       const user = JSON.parse(userString);
-
       localStorage.setItem("rentnest_token", token);
       localStorage.setItem("rentnest_user", JSON.stringify(user));
-
       onLogin(user);
-
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
@@ -30,8 +27,8 @@ export default function GoogleSuccess({ onLogin }) {
   }, [params, navigate, onLogin]);
 
   return (
-    <div style={{ textAlign: "center", padding: "50px" }}>
-      <h2>Signing you in...</h2>
+    <div className="px-4 py-20 text-center text-slate-600">
+      <h2 className="text-2xl font-bold text-navy-900">Signing you in...</h2>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
+import AuthShell from "../components/AuthShell";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -29,43 +30,24 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="auth-wrap">
-      <div className="auth-panel">
-        <p className="eyebrow">RENTNEST</p>
-        <h1>Set a new password</h1>
-        <p>Choose a new password for your account.</p>
-
-        {err && <div className="error">{err}</div>}
-
-        <form onSubmit={submit}>
-          <label>
-            New password
-            <input
-              type="password"
-              required
-              minLength="6"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          <label>
-            Confirm password
-            <input
-              type="password"
-              required
-              minLength="6"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-            />
-          </label>
-          <button className="primary full" disabled={loading}>
-            {loading ? "Updating..." : "Update password"}
-          </button>
-          <p className="switch">
-            <Link to="/login">Back to sign in</Link>
-          </p>
-        </form>
-      </div>
-    </div>
+    <AuthShell title="Set a new password" subtitle="Choose a new password for your account.">
+      {err && <div className="mb-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{err}</div>}
+      <form onSubmit={submit} className="space-y-4">
+        <label className="label">
+          New password
+          <input className="input mt-1" type="password" required minLength="6" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </label>
+        <label className="label">
+          Confirm password
+          <input className="input mt-1" type="password" required minLength="6" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+        </label>
+        <button className="btn-primary w-full" disabled={loading}>
+          {loading ? "Updating..." : "Update password"}
+        </button>
+        <p className="text-sm text-slate-500">
+          <Link className="font-semibold text-navy-700" to="/login">Back to sign in</Link>
+        </p>
+      </form>
+    </AuthShell>
   );
 }

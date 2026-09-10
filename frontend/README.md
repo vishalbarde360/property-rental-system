@@ -1,20 +1,27 @@
-# RentNest React + Vite Frontend
+# HomeLuxe frontend (React + Vite + Tailwind)
 
-Frontend for the Property Rental Platform backend. Built with React, Vite, React Router and Axios.
+This replaces the existing `frontend/` folder UI only.
+All routes, API calls, auth tokens (`rentnest_token` / `rentnest_user`), and role logic stay the same as your current app.
+Backend is unchanged.
 
-## Run
-1. `npm install`
-2. Copy `.env.example` to `.env`
-3. Set `VITE_API_URL=http://localhost:5000/api/v1`
-4. `npm run dev`
+## Setup
 
-## Included
-- Tenant/Owner registration and login
-- Property search and filters
-- Property details and applications
-- Owner property listing and application review
-- Payment history
-- Admin analytics, user moderation, property moderation, reports
-- Responsive mobile/tablet/desktop UI
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-The UI follows the supplied PRD's core journeys and screens. The backend already exposes the APIs consumed here. Image upload/payment gateway are intentionally kept as URL/record-based MVP flows because the current backend does not expose Cloudinary/Stripe/Razorpay upload or checkout endpoints.
+Keep your existing `.env`:
+
+```
+VITE_API_URL=http://localhost:5000/api/v1
+VITE_GOOGLE_AUTH_URL=http://localhost:5000/api/v1/auth/google
+```
+
+Run backend on port 5000, then open the Vite URL (usually http://localhost:5173).
+
+## What changed
+- Tailwind CSS UI in the HomeLuxe style from your screenshot
+- Same pages: Home, Login, Register, Property details, Dashboard, Create/Edit property, Applications, Payments, Admin, Saved, Earnings, Forgot/Reset password, Google success
+- Same API service and route guards

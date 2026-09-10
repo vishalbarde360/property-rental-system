@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { inr } from "../ui";
+
 export default function PropertyDetails({ user }) {
   const { id } = useParams(),
     nav = useNavigate();
@@ -59,7 +61,7 @@ export default function PropertyDetails({ user }) {
       setSaveErr(e.response?.data?.message || "Could not update saved list");
     }
   };
-  if (!p) return <div className="empty">Loading property…</div>;
+  if (!p) return <div className="page text-slate-500">Loading property…</div>;
   const apply = async () => {
     if (!user) {
       nav("/login");
@@ -124,139 +126,139 @@ export default function PropertyDetails({ user }) {
       setReportMsg(e.response?.data?.message || "Could not submit report");
     }
   };
+  const img = p.images?.[0] || "/images/hero.jpg";
   return (
-    <div className="detail page">
-      <button className="back" onClick={() => nav(-1)}>
+    <div className="page">
+      <button className="btn-ghost mb-4" onClick={() => nav(-1)} type="button">
         ← Back
       </button>
-      <div className="detail-grid">
+      <div className="grid gap-8 lg:grid-cols-[1.4fr_.8fr]">
         <div>
-          <div className="detail-image">
-            {p.images?.[0] ? (
-              <img src={p.images[0]} alt="" />
-            ) : (
-              <div className="img-placeholder big">⌂</div>
-            )}
+          <div className="overflow-hidden rounded-2xl">
+            <img src={img} alt="" className="h-[360px] w-full object-cover" />
           </div>
-          <div className="detail-copy">
-            <span className="pill dark">{p.type}</span>
-            <h1>{p.title}</h1>
-            <p className="location">
+          <div className="mt-6">
+            <span className="rounded-full bg-navy-700 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+              {p.type}
+            </span>
+            <h1 className="mt-3 text-3xl font-extrabold text-navy-900">{p.title}</h1>
+            <p className="mt-1 text-slate-500">
               {p.city}
               {p.address ? ` · ${p.address}` : ""}
             </p>
-            <div className="feature-row">
-              <b>
-                ₹{Number(p.rent).toLocaleString("en-IN")}
-                <small>/month</small>
+            <div className="mt-4 flex flex-wrap gap-3 text-sm">
+              <b className="text-xl text-navy-800">
+                {inr(p.rent)}
+                <small className="ml-1 text-xs font-medium text-slate-500">/month</small>
               </b>
-              <span>
+              <span className="rounded-lg bg-slate-50 px-3 py-1">
                 {p.deposit
-                  ? `₹${Number(p.deposit).toLocaleString("en-IN")} deposit`
+                  ? `${inr(p.deposit)} deposit`
                   : "No deposit listed"}
               </span>
-              <span>{p.bedrooms} bedrooms</span>
-              <span>{p.bathrooms} bathrooms</span>
+              <span className="rounded-lg bg-slate-50 px-3 py-1">{p.bedrooms} bedrooms</span>
+              <span className="rounded-lg bg-slate-50 px-3 py-1">{p.bathrooms} bathrooms</span>
             </div>
-            <p>{p.description || "No description provided."}</p>
+            <p className="mt-5 text-slate-600">{p.description || "No description provided."}</p>
             {p.amenities?.length > 0 && (
               <>
-                <h3>Amenities</h3>
-                <div className="tags">
+                <h3 className="mt-6 font-bold text-navy-900">Amenities</h3>
+                <div className="mt-2 flex flex-wrap gap-2">
                   {p.amenities.map((a) => (
-                    <span key={a}>{a}</span>
+                    <span key={a} className="rounded-full bg-navy-50 px-3 py-1 text-sm text-navy-800">
+                      {a}
+                    </span>
                   ))}
                 </div>
               </>
             )}
           </div>
         </div>
-        <aside className="apply-card">
-          <p className="eyebrow">OWNER</p>
-          <h3>{p.ownerId?.name || "Property owner"}</h3>
-          <p>{p.ownerId?.email}</p>
+        <aside className="card h-fit p-5">
+          <p className="eyebrow">Owner</p>
+          <h3 className="mt-1 text-lg font-bold">{p.ownerId?.name || "Property owner"}</h3>
+          <p className="text-sm text-slate-500">{p.ownerId?.email}</p>
 
           {(!user || user.role === "tenant") && (
             <>
-              <button className="button full" onClick={toggleSave}>
-                {saved ? "★ Saved" : "☆ Save property"}
+              <button className="btn-secondary mt-4 w-full" onClick={toggleSave} type="button">
+                {saved ? "♥ Saved" : "♡ Save property"}
               </button>
-              {saveErr && <div className="error">{saveErr}</div>}
+              {saveErr && <div className="mt-2 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{saveErr}</div>}
             </>
           )}
 
-          <hr />
-          <h3>Interested?</h3>
+          <hr className="my-4 border-slate-100" />
+          <h3 className="font-bold">Interested?</h3>
           <textarea
+            className="input mt-2 min-h-24"
             value={application}
             onChange={(e) => setApplication(e.target.value)}
           />
-          <button className="primary full" onClick={apply}>
+          <button className="btn-primary mt-3 w-full" onClick={apply} type="button">
             Apply for this property
           </button>
-          {msg && <div className="success">{msg}</div>}
+          {msg && <div className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{msg}</div>}
 
-          <hr />
+          <hr className="my-4 border-slate-100" />
           {reportOpen ? (
             <form onSubmit={submitReport}>
-              <h3>Report this listing</h3>
+              <h3 className="font-bold">Report this listing</h3>
               <textarea
+                className="input mt-2 min-h-24"
                 required
                 placeholder="What's wrong with this listing?"
                 value={reportReason}
                 onChange={(e) => setReportReason(e.target.value)}
               />
-              <button className="primary full">Submit report</button>
+              <button className="btn-primary mt-3 w-full">Submit report</button>
             </form>
           ) : (
-            <button className="button full" onClick={() => setReportOpen(true)}>
+            <button className="btn-secondary w-full" onClick={() => setReportOpen(true)} type="button">
               Report this listing
             </button>
           )}
-          {reportMsg && <div className="success">{reportMsg}</div>}
+          {reportMsg && <div className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{reportMsg}</div>}
         </aside>
       </div>
-      <section className="reviews">
-        <h2>Reviews</h2>
+      <section className="mt-10">
+        <h2 className="text-2xl font-extrabold text-navy-900">Reviews</h2>
         {reviews.length ? (
           reviews.map((r) => (
-            <div className="review" key={r._id}>
+            <div className="mt-4 rounded-xl border border-slate-100 p-4" key={r._id}>
               <b>{r.reviewerId?.name || "Tenant"}</b>
-              <span>
+              <span className="ml-2 text-amber-500">
                 {" "}
                 {"★".repeat(r.rating)}
                 {"☆".repeat(5 - r.rating)}
               </span>
-              <p>{r.comment}</p>
+              <p className="mt-1 text-slate-600">{r.comment}</p>
               {user &&
-                ((user._id || user.id) === r.reviewerId?._id ||
-                  user.role === "admin") && (
-                  <button className="linkbtn" onClick={() => deleteReview(r._id)}>
+                ((user._id || user.id) === r.reviewerId?._id || user.role === "admin") && (
+                  <button className="mt-2 text-sm font-semibold text-rose-600" onClick={() => deleteReview(r._id)} type="button">
                     Delete review
                   </button>
                 )}
             </div>
           ))
         ) : (
-          <p>No reviews yet.</p>
+          <p className="mt-3 text-slate-500">No reviews yet.</p>
         )}
 
         {user && user.role !== "owner" && (
-          <form className="form-grid card-form" onSubmit={submitReview}>
-            <h3 className="span2">Leave a review</h3>
-            <p className="muted span2">
-              You can review a property once your application for it has
-              been approved.
+          <form className="card mt-6 grid gap-4 p-5 sm:grid-cols-2" onSubmit={submitReview}>
+            <h3 className="text-lg font-bold sm:col-span-2">Leave a review</h3>
+            <p className="text-sm text-slate-500 sm:col-span-2">
+              You can review a property once your application for it has been approved.
             </p>
-            {reviewErr && <div className="error span2">{reviewErr}</div>}
-            {reviewMsg && <div className="success span2">{reviewMsg}</div>}
-            <label>
+            {reviewErr && <div className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700 sm:col-span-2">{reviewErr}</div>}
+            {reviewMsg && <div className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700 sm:col-span-2">{reviewMsg}</div>}
+            <label className="label">
               Rating
               <select
+                className="input mt-1"
                 value={reviewForm.rating}
-                onChange={(e) =>
-                  setReviewForm({ ...reviewForm, rating: e.target.value })
-                }
+                onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
               >
                 {[5, 4, 3, 2, 1].map((n) => (
                   <option key={n} value={n}>
@@ -265,17 +267,16 @@ export default function PropertyDetails({ user }) {
                 ))}
               </select>
             </label>
-            <label className="span2">
+            <label className="label sm:col-span-2">
               Comment
               <textarea
+                className="input mt-1 min-h-24"
                 required
                 value={reviewForm.comment}
-                onChange={(e) =>
-                  setReviewForm({ ...reviewForm, comment: e.target.value })
-                }
+                onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
               />
             </label>
-            <button className="primary span2">Submit review</button>
+            <button className="btn-primary sm:col-span-2">Submit review</button>
           </form>
         )}
       </section>
