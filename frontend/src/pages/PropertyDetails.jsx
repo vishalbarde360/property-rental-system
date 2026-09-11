@@ -62,6 +62,8 @@ export default function PropertyDetails({ user }) {
     }
   };
   if (!p) return <div className="page text-slate-500">Loading property…</div>;
+    const imgs = p.images?.length ? p.images : ["/images/hero.jpg"];
+  const [imgIndex, setImgIndex] = useState(0);
   const apply = async () => {
     if (!user) {
       nav("/login");
@@ -126,7 +128,7 @@ export default function PropertyDetails({ user }) {
       setReportMsg(e.response?.data?.message || "Could not submit report");
     }
   };
-  const img = p.images?.[0] || "/images/hero.jpg";
+ 
   return (
     <div className="page">
       <button className="btn-ghost mb-4" onClick={() => nav(-1)} type="button">
@@ -134,8 +136,31 @@ export default function PropertyDetails({ user }) {
       </button>
       <div className="grid gap-8 lg:grid-cols-[1.4fr_.8fr]">
         <div>
-          <div className="overflow-hidden rounded-2xl">
-            <img src={img} alt="" className="h-[360px] w-full object-cover" />
+                   <div>
+            <div className="overflow-hidden rounded-2xl">
+              <img
+                src={imgs[imgIndex] || imgs[0]}
+                alt=""
+                className="h-[360px] w-full object-cover"
+              />
+            </div>
+
+            {imgs.length > 1 && (
+              <div className="mt-3 flex gap-2 overflow-x-auto">
+                {imgs.map((src, i) => (
+                  <button
+                    key={src + i}
+                    type="button"
+                    onClick={() => setImgIndex(i)}
+                    className={`h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 ${
+                      i === imgIndex ? "border-navy-700" : "border-transparent"
+                    }`}
+                  >
+                    <img src={src} alt="" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="mt-6">
             <span className="rounded-full bg-navy-700 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
