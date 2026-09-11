@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import ProfileDropdown from "./ProfileDropdown";
-
 const linkClass = ({ isActive }) =>
-  `text-sm font-medium transition ${isActive ? "text-navy-800" : "text-slate-600 hover:text-navy-800"}`;
+  `rounded-full px-3 py-1.5 text-sm font-medium transition ${
+    isActive ? "bg-black text-white" : "text-slate-600 hover:bg-slate-100 hover:text-black"
+  }`;
 
 export default function Layout({ user, onLogout, children }) {
   const nav = useNavigate();
