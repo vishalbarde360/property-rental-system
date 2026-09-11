@@ -52,7 +52,7 @@ export default function Payments({ user }) {
     load();
   }, [applicationId]);
 
-  const submitPayment = async (e) => {
+    const submitPayment = async (e) => {
     e.preventDefault();
     if (!application) {
       setError("Please select an approved application.");
@@ -71,26 +71,40 @@ export default function Payments({ user }) {
       setError("Please enter a valid amount.");
       return;
     }
+
     try {
       setSaving(true);
       setError("");
-      await api.post("/payments", {
+
+      const { data } = await api.post("/payments/order", {
         applicationId: application._id,
         amount: Number(form.amount),
         type: form.type,
-        method: form.method,
         receiverId,
-        transactionReference: form.transactionReference.trim(),
-        status: "pending",
       });
-      alert("Payment created successfully!");
-      nav("/payments");
+
+      const rzp = new window.Razorpay({
+        key: data.key || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        name: "HomeLuxe",
+        description: form.type === "deposit" ? "Security Deposit" : "Rent Payment",
+        order_id: data.orderId,
+        handler: async (response) => {
+          await api.post("/payments/verify", {
+            ...response,
+            paymentId: data.paymentId,
+          });
+          alert("Payment successful!");
+          nav("/payments");
+        },
+        prefill: { name: user?.name, email: user?.email },
+        theme: { color: "#163A66" },
+      });
+
+      rzp.open();
     } catch (e) {
-      setError(
-        e.response?.data?.message ||
-          e.response?.data?.error ||
-          "Could not create payment",
-      );
+      setError(e.response?.data?.message || "Could not start payment");
     } finally {
       setSaving(false);
     }

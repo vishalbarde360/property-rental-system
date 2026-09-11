@@ -1,3 +1,6 @@
+
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
 const Payment = require("../models/Payment");
 const Application = require("../models/Application");
 exports.create = async (req, res) => {
@@ -242,4 +245,75 @@ exports.getOne = async (req, res) => {
   )
     return res.status(403).json({ message: "Access denied" });
   res.json(p);
+};
+
+
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+exports.createOrder = async (req, res) => {
+  try {
+    const { applicationId, amount, type, receiverId } = req.body;
+    if (!amount || !receiverId) {
+      return res.status(400).json({ message: "amount and receiverId are required" });
+    }
+
+    const order = await razorpay.orders.create({
+      amount: Math.round(Number(amount) * 100),
+      currency: "INR",
+      receipt: `rcpt_${Date.now()}`,
+    });
+
+    const payment = await Payment.create({
+      applicationId,
+      payerId: req.user._id,
+      receiverId,
+      amount,
+      type: type || "rent",
+      method: "upi",
+      transactionReference: order.id,
+      status: "pending",
+    });
+
+    res.json({
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      paymentId: payment._id,
+      key: process.env.RAZORPAY_KEY_ID,
+    });
+  } catch (e) {
+    res.status(400).json({ message: "Could not create order", error: e.message });
+  }
+};
+
+exports.verify = async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentId } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expected = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest("hex");
+
+    if (expected !== razorpay_signature) {
+      return res.status(400).json({ message: "Payment verification failed" });
+    }
+
+    const p = await Payment.findById(paymentId);
+    if (!p) return res.status(404).json({ message: "Payment not found" });
+
+    p.status = "success";
+    p.transactionReference = razorpay_payment_id;
+    p.paidAt = new Date();
+    await p.save();
+
+    res.json({ message: "Payment successful", payment: p });
+  } catch (e) {
+    res.status(400).json({ message: "Could not verify payment", error: e.message });
+  }
 };
