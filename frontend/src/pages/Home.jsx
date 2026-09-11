@@ -55,7 +55,7 @@ export default function Home() {
 
   return (
     <div>
-      <section className="relative mx-4 mt-4 overflow-hidden rounded-[28px] bg-slate-900 sm:mx-6">
+      <section className="anim relative mx-4 mt-4 overflow-hidden rounded-[28px] bg-slate-900 sm:mx-6">
         {heroImages.map((src, i) => (
           <img
             key={src}
@@ -128,7 +128,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="search" className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">
+      <section id="search" className="anim d2 mx-auto mt-8 max-w-6xl px-4 sm:px-6">
         <div className="rounded-2xl bg-white p-4 shadow-search">
           <div className="mb-4 flex gap-2">
             {["buy", "rent", "sell"].map((t) => (
@@ -215,10 +215,11 @@ export default function Home() {
           ["Expert Agents", "Work with experienced agents who guide you at every step."],
           ["Trusted & Secure", "Transparent process and secure property transactions."],
           ["Best Deals", "Get the best value with exclusive property deals."],
-        ].map(([t, d]) => (
+        ].map(([t, d], i) => (
           <div
             key={t}
-            className="group rounded-2xl p-6 text-center transition duration-300 hover:-translate-y-2 hover:bg-slate-50 hover:shadow-lg"
+            className="anim group rounded-2xl p-6 text-center transition duration-300 hover:-translate-y-2 hover:bg-slate-50 hover:shadow-lg"
+            style={{ animationDelay: `${0.15 + i * 0.1}s` }}
           >
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy-700 text-white transition duration-300 group-hover:scale-110">
               ⌂
@@ -230,7 +231,7 @@ export default function Home() {
       </section>
 
       <section id="listings" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <div className="mb-6 flex items-end justify-between">
+        <div className="anim mb-6 flex items-end justify-between">
           <div>
             <p className="eyebrow">Featured Properties</p>
             <h2 className="mt-1 text-3xl font-extrabold text-navy-900">Homes You'll Love</h2>
@@ -254,7 +255,7 @@ export default function Home() {
         )}
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+      <section className="anim mx-auto max-w-6xl px-4 py-6 sm:px-6">
         <div className="overflow-hidden rounded-2xl bg-navy-900 text-white md:grid md:grid-cols-2">
           <div className="p-8 sm:p-10">
             <h2 className="text-3xl font-extrabold">Thinking of Selling?</h2>
@@ -275,7 +276,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <section className="anim mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <p className="eyebrow">Why Choose Us</p>
         <h2 className="mt-1 text-3xl font-extrabold text-navy-900">We Make Real Estate Simple</h2>
         <div className="mt-8 grid gap-6 md:grid-cols-4">
