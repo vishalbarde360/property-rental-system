@@ -16,7 +16,7 @@ export default function Home() {
   });
   const [tab, setTab] = useState("rent");
 
-    const heroImages = [
+  const heroImages = [
     "/images/house-3.jpg",
     "/images/hero.jpg",
     "/images/house-1.jpg",
@@ -56,7 +56,7 @@ export default function Home() {
   return (
     <div>
       <section className="relative mx-4 mt-4 overflow-hidden rounded-[28px] bg-slate-900 sm:mx-6">
-          {heroImages.map((src, i) => (
+        {heroImages.map((src, i) => (
           <img
             key={src}
             src={src}
@@ -66,14 +66,28 @@ export default function Home() {
             }`}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
-        <div className="relative z-10 flex min-h-[520px] flex-col justify-between px-6 py-8 sm:min-h-[620px] sm:px-10">
-          <div className="grid gap-4 text-white/90 sm:grid-cols-3">
-            
+        <div className="relative z-10 flex min-h-[420px] flex-col justify-between gap-8 px-6 pb-16 pt-8 sm:min-h-[500px] sm:px-10 sm:pb-20">
+          <div className="grid gap-3 text-white/90 sm:grid-cols-3">
+            <p className="max-w-[180px] text-xs leading-relaxed">
+              Dream bigger.
+              <br />
+              Live in style.
+            </p>
+            <p className="hidden max-w-[180px] text-xs leading-relaxed sm:block sm:justify-self-center">
+              Architectural
+              <br />
+              masterpiece.
+            </p>
+            <p className="hidden max-w-[180px] text-xs leading-relaxed sm:block sm:justify-self-end">
+              Space for life
+              <br />
+              and rest.
+            </p>
           </div>
 
-                  <h1 className="pointer-events-none select-none text-center text-[18vw] font-semibold leading-[0.8] tracking-tight text-white/80 mix-blend-multiply sm:text-[12vw] lg:text-[160px]">
+          <h1 className="px-2 text-center text-5xl font-semibold tracking-tight text-white/90 sm:text-7xl md:text-8xl lg:text-9xl">
             {"HOMELUXE".split("").map((ch, i) => (
               <span
                 key={i}
@@ -85,7 +99,7 @@ export default function Home() {
             ))}
           </h1>
 
-          <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2">
               {[
                 ["", "All"],
@@ -107,14 +121,14 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <span className="text-sm font-semibold tracking-[0.25em] text-white">
+            <span className="hidden text-sm font-semibold tracking-[0.25em] text-white sm:block">
               HOMELUXE
             </span>
           </div>
         </div>
       </section>
 
-      <section id="search" className="relative z-10 mx-auto -mt-6 max-w-6xl px-4 sm:px-6">
+      <section id="search" className="relative z-10 mx-auto max-w-6xl px-4 sm:-mt-10 sm:px-6">
         <div className="rounded-2xl bg-white p-4 shadow-search">
           <div className="mb-4 flex gap-2">
             {["buy", "rent", "sell"].map((t) => (
@@ -202,12 +216,13 @@ export default function Home() {
           ["Trusted & Secure", "Transparent process and secure property transactions."],
           ["Best Deals", "Get the best value with exclusive property deals."],
         ].map(([t, d]) => (
-       
-       <div
-  key={t}
-  className="rounded-2xl p-6 text-center transition duration-300 hover:-translate-y-2 hover:bg-slate-50 hover:shadow-lg"
->
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy-700 text-white transition duration-300 group-hover:scale-110">⌂</div>
+          <div
+            key={t}
+            className="group rounded-2xl p-6 text-center transition duration-300 hover:-translate-y-2 hover:bg-slate-50 hover:shadow-lg"
+          >
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy-700 text-white transition duration-300 group-hover:scale-110">
+              ⌂
+            </div>
             <h3 className="text-sm font-bold text-navy-900">{t}</h3>
             <p className="mt-1 text-sm text-slate-500">{d}</p>
           </div>
@@ -270,7 +285,10 @@ export default function Home() {
             ["Proven Results", "A track record of successful sales and happy clients."],
             ["Full Support", "From search to closing, we're with you all the way."],
           ].map(([t, d]) => (
-            <div key={t}>
+            <div
+              key={t}
+              className="rounded-xl p-4 transition duration-300 hover:-translate-y-1 hover:bg-slate-50"
+            >
               <h3 className="font-bold text-navy-900">{t}</h3>
               <p className="mt-1 text-sm text-slate-500">{d}</p>
             </div>
