@@ -9,9 +9,9 @@ export default function PropertyCard({ p, index = 0 }) {
 
   return (
     <Link
-      className="group overflow-hidden rounded-xl border border-slate-100 bg-white shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
-      to={`/properties/${p._id}`}
-    >
+  className="group overflow-hidden rounded-xl border border-slate-100 bg-white shadow-card transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+  to={`/properties/${p._id}`}
+>
       <div className="relative h-48 overflow-hidden bg-slate-100">
         <img src={img} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
         <span className="absolute left-3 top-3 rounded bg-navy-700 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">

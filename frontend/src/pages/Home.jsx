@@ -73,8 +73,16 @@ export default function Home() {
             
           </div>
 
-          <h1 className="pointer-events-none select-none text-center text-[18vw] font-semibold leading-[0.8] tracking-tight text-white/80 mix-blend-multiply sm:text-[12vw] lg:text-[160px]">
-            HOMELUXE
+                  <h1 className="pointer-events-none select-none text-center text-[18vw] font-semibold leading-[0.8] tracking-tight text-white/80 mix-blend-multiply sm:text-[12vw] lg:text-[160px]">
+            {"HOMELUXE".split("").map((ch, i) => (
+              <span
+                key={i}
+                className="homeluxe-letter"
+                style={{ animationDelay: `${i * 0.12}s` }}
+              >
+                {ch}
+              </span>
+            ))}
           </h1>
 
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -194,8 +202,12 @@ export default function Home() {
           ["Trusted & Secure", "Transparent process and secure property transactions."],
           ["Best Deals", "Get the best value with exclusive property deals."],
         ].map(([t, d]) => (
-          <div key={t} className="text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy-700 text-white">⌂</div>
+       
+       <div
+  key={t}
+  className="rounded-2xl p-6 text-center transition duration-300 hover:-translate-y-2 hover:bg-slate-50 hover:shadow-lg"
+>
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy-700 text-white transition duration-300 group-hover:scale-110">⌂</div>
             <h3 className="text-sm font-bold text-navy-900">{t}</h3>
             <p className="mt-1 text-sm text-slate-500">{d}</p>
           </div>

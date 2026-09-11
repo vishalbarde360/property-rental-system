@@ -40,3 +40,20 @@
     @apply text-xs font-semibold tracking-[0.16em] text-navy-700 uppercase;
   }
 }
+
+@keyframes homeluxe-letter {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.homeluxe-letter {
+  display: inline-block;
+  opacity: 0;
+  animation: homeluxe-letter 0.8s ease forwards;
+}
