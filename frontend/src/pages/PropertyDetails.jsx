@@ -20,6 +20,8 @@ export default function PropertyDetails({ user }) {
   const [reportMsg, setReportMsg] = useState("");
   const [saved, setSaved] = useState(false);
   const [saveErr, setSaveErr] = useState("");
+   const [imgIndex, setImgIndex] = useState(0);
+
 
   const loadReviews = () =>
     api.get("/reviews/property/" + id).then((r) => setReviews(r.data));
@@ -63,7 +65,7 @@ export default function PropertyDetails({ user }) {
   };
   if (!p) return <div className="page text-slate-500">Loading property…</div>;
     const imgs = p.images?.length ? p.images : ["/images/hero.jpg"];
-  const [imgIndex, setImgIndex] = useState(0);
+  
   const apply = async () => {
     if (!user) {
       nav("/login");
@@ -137,6 +139,7 @@ export default function PropertyDetails({ user }) {
       <div className="grid gap-8 lg:grid-cols-[1.4fr_.8fr]">
         <div>
                    <div>
+                      <div>
             <div className="overflow-hidden rounded-2xl">
               <img
                 src={imgs[imgIndex] || imgs[0]}
