@@ -16,6 +16,21 @@ export default function Home() {
   });
   const [tab, setTab] = useState("rent");
 
+    const heroImages = [
+    "/images/house-3.jpg",
+    "/images/hero.jpg",
+    "/images/house-1.jpg",
+    "/images/house-2.jpg",
+  ];
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setHeroIndex((i) => (i + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, []);
+
   const load = async (nextForm = form) => {
     setLoading(true);
     try {
@@ -41,11 +56,16 @@ export default function Home() {
   return (
     <div>
       <section className="relative mx-4 mt-4 overflow-hidden rounded-[28px] bg-slate-900 sm:mx-6">
-        <img
-          src="/images/house-3.jpg"
-          alt="HomeLuxe home"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+          {heroImages.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+              i === heroIndex ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/40" />
 
         <div className="relative z-10 flex min-h-[520px] flex-col justify-between px-6 py-8 sm:min-h-[620px] sm:px-10">
@@ -53,7 +73,7 @@ export default function Home() {
             
           </div>
 
-          <h1 className="pointer-events-none select-none text-center text-[18vw] font-semibold leading-[0.8] tracking-tight text-black/80 mix-blend-multiply sm:text-[12vw] lg:text-[160px]">
+          <h1 className="pointer-events-none select-none text-center text-[18vw] font-semibold leading-[0.8] tracking-tight text-white/80 mix-blend-multiply sm:text-[12vw] lg:text-[160px]">
             HOMELUXE
           </h1>
 
@@ -102,7 +122,7 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <div className=" p-[10px] grid gap-3 md:grid-cols-6">
+          <div className="grid gap-3 md:grid-cols-6">
             <label className="md:col-span-2">
               <span className="mb-1 block text-xs font-semibold text-slate-500">Location</span>
               <input
