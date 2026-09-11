@@ -3,8 +3,10 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import ProfileDropdown from "./ProfileDropdown";
 const linkClass = ({ isActive }) =>
-  `rounded-full px-3 py-1.5 text-sm font-medium transition ${
-    isActive ? "bg-black text-white" : "text-slate-600 hover:bg-slate-100 hover:text-black"
+  `rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-300 ease-in-out ${
+    isActive
+      ? "bg-black text-white shadow-sm"
+      : "bg-transparent text-slate-600 hover:bg-slate-100 hover:text-black"
   }`;
 
 export default function Layout({ user, onLogout, children }) {
