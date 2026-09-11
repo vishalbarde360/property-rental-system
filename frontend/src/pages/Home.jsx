@@ -68,7 +68,7 @@ export default function Home() {
         ))}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
-        <div className="relative z-10 flex min-h-[420px] flex-col justify-between gap-8 px-6 pb-16 pt-8 sm:min-h-[500px] sm:px-10 sm:pb-20">
+        <div className="relative z-10 flex min-h-[420px] flex-col justify-between gap-8 px-6 py-8 sm:min-h-[500px] sm:px-10">
           <div className="grid gap-3 text-white/90 sm:grid-cols-3">
             <p className="max-w-[180px] text-xs leading-relaxed">
               Dream bigger.
@@ -128,7 +128,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="search" className="relative z-10 mx-auto max-w-6xl px-4 sm:-mt-10 sm:px-6">
+      <section id="search" className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">
         <div className="rounded-2xl bg-white p-4 shadow-search">
           <div className="mb-4 flex gap-2">
             {["buy", "rent", "sell"].map((t) => (
@@ -209,7 +209,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-6 pt-20 sm:px-6 md:grid-cols-4">
+      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-6 pt-16 sm:px-6 md:grid-cols-4">
         {[
           ["Find The Perfect Home", "Browse thousands of verified listings that match your needs."],
           ["Expert Agents", "Work with experienced agents who guide you at every step."],
