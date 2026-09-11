@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import api from "./services/api";
 import Layout from "./components/Layout";
@@ -38,6 +39,9 @@ export default function App() {
 
   return (
     <Layout user={user} onLogout={() => setUser(null)}>
+      
+      <ScrollToTop />
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/properties" element={<Home />} />
