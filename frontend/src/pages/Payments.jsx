@@ -7,6 +7,7 @@ export default function Payments({ user }) {
   const [searchParams] = useSearchParams();
   const nav = useNavigate();
   const applicationId = searchParams.get("applicationId");
+
   const [payments, setPayments] = useState([]);
   const [application, setApplication] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,7 @@ export default function Payments({ user }) {
       setError("");
       const paymentResponse = await api.get("/payments");
       setPayments(Array.isArray(paymentResponse.data) ? paymentResponse.data : []);
+
       if (applicationId) {
         const applicationResponse = await api.get("/applications");
         const found = applicationResponse.data.find(
@@ -105,6 +107,8 @@ export default function Payments({ user }) {
     }
   };
 
+  const formatAmount = (amount) => Number(amount || 0).toLocaleString("en-IN");
+
   const formatDate = (date) => {
     if (!date) return "—";
     return new Date(date).toLocaleDateString("en-IN", {
@@ -130,6 +134,56 @@ export default function Payments({ user }) {
     return method || "—";
   };
 
+  const downloadReceipt = (p) => {
+    const win = window.open("", "_blank", "width=720,height=900");
+    if (!win) return;
+
+    const currentUserId = user?._id || user?.id;
+    const isReceiver =
+      String(p.receiverId?._id || p.receiverId) === String(currentUserId);
+
+    const fromName = isReceiver
+      ? p.payerId?.name || "Tenant"
+      : user?.name || "Tenant";
+    const toName = isReceiver
+      ? user?.name || "Owner"
+      : p.receiverId?.name || "Owner";
+
+    win.document.write(`
+      <html>
+        <head>
+          <title>HomeLuxe Receipt</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 32px; color: #111; }
+            h1 { margin: 0 0 4px; }
+            .muted { color: #666; font-size: 13px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+            td { padding: 10px 0; border-bottom: 1px solid #eee; }
+            .total { font-size: 20px; font-weight: bold; }
+            button { margin-top: 24px; padding: 10px 16px; }
+          </style>
+        </head>
+        <body>
+          <h1>HOMELUXE</h1>
+          <p class="muted">Payment Receipt</p>
+          <table>
+            <tr><td>Receipt ID</td><td>${p._id}</td></tr>
+            <tr><td>Date</td><td>${formatDate(p.paidAt || p.createdAt)}</td></tr>
+            <tr><td>From</td><td>${fromName}</td></tr>
+            <tr><td>To</td><td>${toName}</td></tr>
+            <tr><td>Type</td><td>${typeText(p.type)}</td></tr>
+            <tr><td>Method</td><td>${methodText(p.method)}</td></tr>
+            <tr><td>Reference</td><td>${p.transactionReference || "—"}</td></tr>
+            <tr><td>Status</td><td>${statusText(p.status)}</td></tr>
+            <tr><td class="total">Amount</td><td class="total">₹${formatAmount(p.amount)}</td></tr>
+          </table>
+          <button onclick="window.print()">Print / Save as PDF</button>
+        </body>
+      </html>
+    `);
+    win.document.close();
+  };
+
   return (
     <div className="page">
       <div>
@@ -143,7 +197,11 @@ export default function Payments({ user }) {
             : "Manage your rent and deposit payments."}
         </p>
       </div>
-      {error && <div className="mt-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>}
+
+      {error && (
+        <div className="mt-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>
+      )}
+
       {user?.role === "tenant" && applicationId && application && (
         <section className="card mt-6 p-5">
           <h2 className="text-xl font-bold text-navy-900">Make a Payment</h2>
@@ -207,8 +265,11 @@ export default function Payments({ user }) {
           </form>
         </section>
       )}
+
       {loading ? (
-        <div className="mt-8 rounded-xl bg-slate-50 p-10 text-center text-slate-500">Loading payments...</div>
+        <div className="mt-8 rounded-xl bg-slate-50 p-10 text-center text-slate-500">
+          Loading payments...
+        </div>
       ) : payments.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
           <h3 className="text-lg font-bold text-navy-900">No payments yet</h3>
@@ -222,8 +283,12 @@ export default function Payments({ user }) {
               const currentUserId = user?._id || user?.id;
               const isReceiver =
                 String(p.receiverId?._id || p.receiverId) === String(currentUserId);
+
               return (
-                <div className="card flex flex-wrap items-start justify-between gap-4 p-4" key={p._id}>
+                <div
+                  className="card flex flex-wrap items-start justify-between gap-4 p-4"
+                  key={p._id}
+                >
                   <div>
                     <b className="text-navy-900">{inr(p.amount)}</b>
                     <p className="mt-1 text-sm text-slate-500">
@@ -239,13 +304,29 @@ export default function Payments({ user }) {
                     )}
                     <p className="text-sm text-slate-400">{formatDate(p.paidAt || p.createdAt)}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(p.status)}`}>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(p.status)}`}
+                    >
                       {statusText(p.status)}
                     </span>
                     {user?.role === "owner" && p.status === "pending" && (
-                      <button className="btn-primary" onClick={() => confirmPayment(p._id)} type="button">
+                      <button
+                        className="btn-primary"
+                        onClick={() => confirmPayment(p._id)}
+                        type="button"
+                      >
                         Confirm Payment
+                      </button>
+                    )}
+                    {p.status === "success" && (
+                      <button
+                        className="btn-secondary"
+                        type="button"
+                        onClick={() => downloadReceipt(p)}
+                      >
+                        Download Receipt
                       </button>
                     )}
                   </div>
