@@ -15,10 +15,11 @@ export default function Home() {
     bedrooms: params.get("bedrooms") || "",
   });
   const [tab, setTab] = useState("rent");
-  const load = async () => {
+
+  const load = async (nextForm = form) => {
     setLoading(true);
     try {
-      const q = Object.fromEntries(Object.entries(form).filter(([, v]) => v));
+      const q = Object.fromEntries(Object.entries(nextForm).filter(([, v]) => v));
       setParams(q);
       const r = await api.get("/properties", { params: q });
       setData(r.data);
@@ -26,114 +27,142 @@ export default function Home() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     load();
   }, []);
 
+  const setType = (type) => {
+    const next = { ...form, type };
+    setForm(next);
+    load(next);
+  };
+
   return (
     <div>
-      <section className="relative overflow-hidden bg-slate-50">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-16">
-          <div>
-            <h1 className="text-4xl font-extrabold leading-[1.1] text-navy-900 sm:text-5xl lg:text-6xl">
-              Find Your
-              <br /> Perfect Home
-            </h1>
-            <p className="mt-4 max-w-md text-slate-500">
-              Discover exceptional properties and unlock the door to your dream home.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a className="btn-primary" href="#listings">
-                Explore Properties →
-              </a>
-              <a className="btn-secondary" href="#search">
-                How It Works ▸
-              </a>
-            </div>
-          </div>
-          <div className="overflow-hidden rounded-3xl shadow-search">
-            <img src="/images/hero.jpg" alt="Luxury home" className="h-[340px] w-full object-cover sm:h-[420px]" />
-          </div>
-        </div>
+      <section className="relative mx-4 mt-4 overflow-hidden rounded-[28px] bg-slate-900 sm:mx-6">
+        <img
+          src="/images/house-3.jpg"
+          alt="HomeLuxe home"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/40" />
 
-        <div id="search" className="relative z-10 mx-auto -mb-10 max-w-6xl px-4 sm:px-6">
-          <div className="rounded-2xl bg-white p-4 shadow-search">
-            <div className="mb-4 flex gap-2">
-              {["buy", "rent", "sell"].map((t) => (
+        <div className="relative z-10 flex min-h-[520px] flex-col justify-between px-6 py-8 sm:min-h-[620px] sm:px-10">
+          <div className="grid gap-4 text-white/90 sm:grid-cols-3">
+            
+          </div>
+
+          <h1 className="pointer-events-none select-none text-center text-[18vw] font-semibold leading-[0.8] tracking-tight text-black/80 mix-blend-multiply sm:text-[12vw] lg:text-[160px]">
+            HOMELUXE
+          </h1>
+
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {[
+                ["", "All"],
+                ["house", "Cottage"],
+                ["apartment", "Mini home"],
+                ["villa", "Eco villa"],
+              ].map(([value, label]) => (
                 <button
-                  key={t}
+                  key={label}
                   type="button"
-                  onClick={() => setTab(t)}
-                  className={`rounded-full px-4 py-1.5 text-sm font-semibold capitalize ${
-                    tab === t ? "bg-navy-700 text-white" : "bg-slate-100 text-slate-600"
+                  onClick={() => setType(value)}
+                  className={`rounded-full px-4 py-1.5 text-sm ${
+                    form.type === value
+                      ? "bg-white text-slate-900"
+                      : "bg-white/25 text-white backdrop-blur"
                   }`}
                 >
-                  {t}
+                  {label}
                 </button>
               ))}
             </div>
-            <div className="grid gap-3 md:grid-cols-6">
-              <label className="md:col-span-2">
-                <span className="mb-1 block text-xs font-semibold text-slate-500">Location</span>
-                <input
-                  className="input"
-                  placeholder="City, Neighborhood, or ZIP"
-                  value={form.city}
-                  onChange={(e) => setForm({ ...form, city: e.target.value })}
-                />
-              </label>
-              <label>
-                <span className="mb-1 block text-xs font-semibold text-slate-500">Property Type</span>
-                <select
-                  className="input"
-                  value={form.type}
-                  onChange={(e) => setForm({ ...form, type: e.target.value })}
-                >
-                  <option value="">Any Type</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="house">House</option>
-                  <option value="room">Room</option>
-                  <option value="studio">Studio</option>
-                  <option value="villa">Villa</option>
-                </select>
-              </label>
-              <label>
-                <span className="mb-1 block text-xs font-semibold text-slate-500">Min rent</span>
-                <input
-                  className="input"
-                  type="number"
-                  placeholder="₹Min"
-                  value={form.minRent}
-                  onChange={(e) => setForm({ ...form, minRent: e.target.value })}
-                />
-              </label>
-              <label>
-                <span className="mb-1 block text-xs font-semibold text-slate-500">Max rent</span>
-                <input
-                  className="input"
-                  type="number"
-                  placeholder="₹Max"
-                  value={form.maxRent}
-                  onChange={(e) => setForm({ ...form, maxRent: e.target.value })}
-                />
-              </label>
-              <div className="flex items-end">
-                <button className="btn-primary w-full" onClick={load} type="button">
-                  Search Properties
-                </button>
-              </div>
+            <span className="text-sm font-semibold tracking-[0.25em] text-white">
+              HOMELUXE
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section id="search" className="relative z-10 mx-auto -mt-6 max-w-6xl px-4 sm:px-6">
+        <div className="rounded-2xl bg-white p-4 shadow-search">
+          <div className="mb-4 flex gap-2">
+            {["buy", "rent", "sell"].map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold capitalize ${
+                  tab === t ? "bg-navy-700 text-white" : "bg-slate-100 text-slate-600"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <div className=" p-[10px] grid gap-3 md:grid-cols-6">
+            <label className="md:col-span-2">
+              <span className="mb-1 block text-xs font-semibold text-slate-500">Location</span>
+              <input
+                className="input"
+                placeholder="City, Neighborhood, or ZIP"
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+              />
+            </label>
+            <label>
+              <span className="mb-1 block text-xs font-semibold text-slate-500">Property Type</span>
+              <select
+                className="input"
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
+              >
+                <option value="">Any Type</option>
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="room">Room</option>
+                <option value="studio">Studio</option>
+                <option value="villa">Villa</option>
+              </select>
+            </label>
+            <label>
+              <span className="mb-1 block text-xs font-semibold text-slate-500">Min rent</span>
+              <input
+                className="input"
+                type="number"
+                placeholder="₹Min"
+                value={form.minRent}
+                onChange={(e) => setForm({ ...form, minRent: e.target.value })}
+              />
+            </label>
+            <label>
+              <span className="mb-1 block text-xs font-semibold text-slate-500">Max rent</span>
+              <input
+                className="input"
+                type="number"
+                placeholder="₹Max"
+                value={form.maxRent}
+                onChange={(e) => setForm({ ...form, maxRent: e.target.value })}
+              />
+            </label>
+            <div className="flex items-end">
+              <button className="btn-primary w-full" onClick={() => load()} type="button">
+                Search Properties
+              </button>
             </div>
-            <div className="mt-3 max-w-xs">
-              <label>
-                <span className="mb-1 block text-xs font-semibold text-slate-500">Beds</span>
-                <input
-                  className="input"
-                  placeholder="Any"
-                  value={form.bedrooms}
-                  onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
-                />
-              </label>
-            </div>
+          </div>
+          <div className="mt-3 max-w-xs">
+            <label>
+              <span className="mb-1 block text-xs font-semibold text-slate-500">Beds</span>
+              <input
+                className="input"
+                placeholder="Any"
+                value={form.bedrooms}
+                onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
+              />
+            </label>
           </div>
         </div>
       </section>
@@ -186,7 +215,10 @@ export default function Home() {
             <p className="mt-3 max-w-md text-sm text-white/60">
               Our expert agents help you sell faster and for the best possible price.
             </p>
-            <Link className="mt-6 inline-flex rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-navy-800" to="/properties/new">
+            <Link
+              className="mt-6 inline-flex rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-navy-800"
+              to="/properties/new"
+            >
               Get Free Home Valuation →
             </Link>
           </div>

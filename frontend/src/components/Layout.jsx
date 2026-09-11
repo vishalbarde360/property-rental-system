@@ -20,19 +20,7 @@ export default function Layout({ user, onLogout, children }) {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="hidden border-b border-navy-800 bg-navy-900 text-white/80 md:block">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2 text-xs sm:px-6">
-          <div className="flex items-center gap-5">
-            <span>Trusted by 10,000+ Clients</span>
-            <span>5 Star Rated Agency</span>
-            <span>Free Property Valuation</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <a href="tel:+18001234567">(800) 123-4567</a>
-            <span className="opacity-70">f in</span>
-          </div>
-        </div>
-      </div>
+      
 
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
